@@ -5,6 +5,14 @@ export const signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
         
+        // Validate password length
+        if (password.length < 8) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 8 characters long'
+            });
+        }
+
         // Check if username or email already exists
         const existingUser = await User.findOne({ $or: [{ username }, { email }] });
         if (existingUser) {

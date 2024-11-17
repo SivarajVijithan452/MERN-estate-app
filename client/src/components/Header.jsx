@@ -1,14 +1,16 @@
 import { FaSearch } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Header() {
     const [activeLink, setActiveLink] = useState('/');
     const location = useLocation(); // To get the current route
 
     // This will update the active link when the location changes
-    useState(() => {
-        setActiveLink(location.pathname);
+    useEffect(() => {
+        const knownRoutes = ['/', '/about', '/signIn'];
+        const currentPath = location.pathname;
+        setActiveLink(knownRoutes.includes(currentPath) ? currentPath : '');
     }, [location]);
 
     return (

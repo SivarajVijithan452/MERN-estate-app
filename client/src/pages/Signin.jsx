@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice.js";
+import OAuth from "../components/OAuth.jsx";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -156,6 +157,7 @@ export default function SignIn() {
               'Sign In'
             )}
           </button>
+          <OAuth />
         </form>
       </div>
     </div>

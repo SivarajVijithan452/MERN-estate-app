@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import OAuth from "../components/OAuth";
 
 export default function SignUp() {
 
@@ -177,6 +178,7 @@ export default function SignUp() {
               'Sign Up'
             )}
           </button>
+          <OAuth />
         </form>
       </div>
     </div>

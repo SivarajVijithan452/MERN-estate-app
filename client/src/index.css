@@ -8,3 +8,32 @@ body {
   background-color: rgb(241, 245, 241);
   font-family: 'Poppins', sans-serif;
 }
+
+@keyframes google-bar {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: -100%;
+    }
+}
+
+.google-progress-bar {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        to right,
+        #4285f4 25%,
+        #ea4335 25%,
+        #ea4335 50%,
+        #fbbc05 50%,
+        #fbbc05 75%,
+        #34a853 75%
+    );
+    animation: google-bar 2s linear infinite;
+}

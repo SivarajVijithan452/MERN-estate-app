@@ -13,16 +13,16 @@ export default function Header() {
 
     return (
         <header className="bg-slate-200 shadow-md">
-            <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
-                <Link to='/'>
-                    <h1 className="text-bold text-sm sm:text-xl flex flex-wrap">
+            <div className="max-w-screen-2xl flex justify-between items-center mx-auto p-3">
+                <h1 className="text-xl font-bold -ml-50">
+                    <Link to='/'>
                         <span className="text-slate-500">Real</span>
                         <span className="text-slate-700">Estate</span>
-                    </h1>
-                </Link>
-                <form className="bg-slate-100 p-3 rounded-lg flex items-center">
-                    <input type="text" placeholder="Search..." className="bg-transparent focus:outline-none w-24 sm:w-64 md:w-128 h-7" />
-                    <FaSearch className="text-slate-600" />
+                    </Link>
+                </h1>
+                <form className="hidden lg:flex bg-slate-100 p-3 rounded-lg items-center">
+                    <input type="text" placeholder="Search..." className="bg-transparent focus:outline-none w-64 lg:w-80 h-7" />
+                    <FaSearch className="text-slate-600 cursor-pointer" />
                 </form>
                 <ul className="flex gap-4">
                     <Link to='/'>

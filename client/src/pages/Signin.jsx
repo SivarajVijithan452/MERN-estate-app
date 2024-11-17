@@ -3,15 +3,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice.js";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.user); // Use the loading state from Redux
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -30,8 +33,7 @@ export default function SignIn() {
     }
 
     try {
-      setLoading(true);
-
+      dispatch(signInStart()); // Set loading state to true
       const response = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
@@ -44,13 +46,15 @@ export default function SignIn() {
       if (data.success) {
         localStorage.setItem('access_token', data.token);
         toast.success(data.message);
-        navigate("/");
+        dispatch(signInSuccess(data.data)); // Set loading state to false
+        navigate("/"); // Redirect to home page
         setFormData({
           email: "",
           password: "",
         });
       } else {
         toast.error(data.message);
+        dispatch(signInFailure(data.message)); // Set loading state to false
         setFormData({
           email: "",
           password: "",
@@ -58,8 +62,7 @@ export default function SignIn() {
       }
     } catch (error) {
       toast.error("An error occurred while signing in", error);
-    } finally {
-      setLoading(false);
+      dispatch(signInFailure(error.message)); // Set loading state to false
     }
   };
 
@@ -124,7 +127,7 @@ export default function SignIn() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading} // Disable the button if loading is true
             className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white ${loading ? 'bg-slate-500 cursor-not-allowed' : 'bg-slate-700 hover:bg-slate-800'
               } focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 uppercase`}
           >

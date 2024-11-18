@@ -4,16 +4,14 @@ import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlinePlus } from 'react-icons/
 import { useRef } from 'react'
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { updateUserSuccess } from '../redux/user/userSlice';  
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice';  
 import { toast } from 'react-toastify';
 
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user)
   console.log('Current user:', currentUser);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    password: ''
-  });
+  const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,12 +54,27 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+    dispatch(updateUserStart());
+
     try {
-      // Your update logic here
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      const res = await axios.put(`/api/user/update/${currentUser.data._id}`, {
+        username: formData.username || currentUser.data.username,
+        email: formData.email || currentUser.data.email,
+        password: formData.password,
+      }, {
+        withCredentials: true
+      });
+
+      if (res.data.success) {
+        dispatch(updateUserSuccess(res.data));
+        toast.success('Profile updated successfully');
+        // Clear password field after successful update
+        setFormData({ ...formData, password: '' });
+      }
     } catch (error) {
+      dispatch(updateUserFailure(error.response?.data?.message || 'Error updating profile'));
       console.error(error);
+      toast.error(error.response?.data?.message || 'Error updating profile');
     } finally {
       setLoading(false);
     }
@@ -166,7 +179,7 @@ export default function Profile() {
 
   return (
     <>
-      <div className="flex items-center justify-center py-12 px-4 mt-10 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-center py-12 px-4 mt-20 sm:px-6 lg:px-8">
         <div className="max-w-xl w-full space-y-8 bg-white p-12 rounded-xl shadow-lg">
           <div>
             <h1 className="text-4xl font-semibold text-center text-gray-900 tracking-tight">
@@ -190,7 +203,7 @@ export default function Profile() {
                   <div className="relative">
                     <img 
                       src={currentUser.data.avatar} 
-                      alt={`${currentUser.data.name}'s profile`} 
+                      alt={`${currentUser.data.username}'s profile`} 
                       className="w-24 h-24 rounded-full object-cover"
                     />
                     {loading && (
@@ -211,14 +224,14 @@ export default function Profile() {
                   <label htmlFor="username" className="block text-base font-medium text-gray-700">
                     Username
                   </label>
-                  <input type="text" id="username" value="" placeholder="Enter Username" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-lg" />
+                  <input type="text" id="username" defaultValue={currentUser.data.username} placeholder="Enter Username" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-lg" onChange={handleChange} />
                 </div>
 
                 <div>
                   <label htmlFor="email" className="block text-base font-medium text-gray-700">
                     Email
                   </label>
-                  <input type="email" id="email" value="" placeholder="Enter Email" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-lg" />
+                  <input type="email" id="email" defaultValue={currentUser.data.email} placeholder="Enter Email" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-lg" onChange={handleChange} />
                 </div>
 
                 <div>

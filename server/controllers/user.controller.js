@@ -1,6 +1,8 @@
 import User from '../models/user.model.js';
 import cloudinary from '../utils/cloudinary.js';
 import bcrypt from 'bcryptjs';
+// import { sendUpdateNotification } from '../utils/emailService.js';
+
 
 export const updateUser = async (req, res, next) => {
     try {
@@ -21,7 +23,11 @@ export const updateUser = async (req, res, next) => {
         );
 
         const { password, ...rest } = updatedUser._doc;
-        res.status(200).json(rest);
+        res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+            data: rest
+        });
     } catch (error) {
         next(error);
     }
@@ -66,30 +72,66 @@ export const deleteImage = async (req, res) => {
 
 export const updateUserInfo = async (req, res) => {
     try {
-        if(req.user.id !== req.params.id) {
+        if (req.user.id !== req.params.id) {
             return res.status(403).json({
                 success: false,
                 message: 'Unauthorized to update this user'
             });
         }
 
-        if (req.body.password) {
-            req.body.password = await bcrypt.hash(req.body.password, 10);
-        }
+        // Get the user before update to compare changes
+        // const currentUser = await User.findById(req.params.id);
+        // const changes = [];
+
+        // Track what's being updated
+        // if (req.body.username && req.body.username !== currentUser.username) {
+        //     changes.push('username');
+        // }
+        // if (req.body.email && req.body.email !== currentUser.email) {
+        //     changes.push('email');
+        // }
+        // if (req.body.password) {
+        //     changes.push('password');
+        //     req.body.password = await bcrypt.hash(req.body.password, 10);
+        // }
 
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
-            { $set: { username: req.body.username, email: req.body.email, password: req.body.password } },
+            {
+                $set: {
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: req.body.password
+                }
+            },
             { new: true }
         );
+
+        // Send email notifications for each change
+        // for (const changeType of changes) {
+        //     try {
+        //         await sendUpdateNotification(
+        //             req.body.email || currentUser.email, // Use new email if changed, otherwise use existing
+        //             changeType
+        //         );
+        //     } catch (emailError) {
+        //         console.error(`Failed to send ${changeType} update notification:`, emailError);
+        //         // Continue with other operations even if email fails
+        //     }
+        // }
 
         const { password, ...rest } = updatedUser._doc;
         res.status(200).json({
             success: true,
             message: 'User updated successfully',
-            rest
+            data: rest
         });
     } catch (error) {
-       
+        console.error('Error updating user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating user',
+            error: error.message
+        });
     }
 }

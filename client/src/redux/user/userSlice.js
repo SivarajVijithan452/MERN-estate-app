@@ -36,6 +36,10 @@ export const userSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+
+        updateUserStart: (state) => {
+            state.loading = true;
+        },
         
         // Add this new reducer for updating user
         updateUserSuccess: (state, action) => {
@@ -43,11 +47,16 @@ export const userSlice = createSlice({
             state.error = null;
             state.loading = false;
         },
+
+        updateUserFailure: (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
     },
 })
 
 // Export the action creators for use in components
-export const { signInStart, signInSuccess, signInFailure, updateUserSuccess } = userSlice.actions;
+export const { signInStart, signInSuccess, signInFailure, updateUserStart, updateUserSuccess, updateUserFailure } = userSlice.actions;
 
 // Export the reducer for store configuration
 export default userSlice.reducer;

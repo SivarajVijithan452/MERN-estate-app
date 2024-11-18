@@ -7,7 +7,7 @@ export default function Header() {
     const [activeLink, setActiveLink] = useState('/');
     const location = useLocation(); // To get the current route
     const { currentUser } = useSelector(state => state.user);
-    // console.log('Current user:', currentUser);
+    console.log('Current user:', currentUser);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -30,7 +30,7 @@ export default function Header() {
     }, []);
 
     return (
-        <header className="bg-slate-200 shadow-md">
+        <header className="bg-slate-200 shadow-md fixed top-0 w-full z-50">
             <div className="max-w-screen-2xl flex justify-between items-center mx-auto p-3">
                 <h1 className="text-xl font-bold">
                     <Link to='/'>

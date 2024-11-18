@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlinePlus } from 'react-icons/ai'
+import { useRef } from 'react'
 
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user)
@@ -13,6 +14,7 @@ export default function Profile() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingText, setDeletingText] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -77,6 +79,15 @@ export default function Profile() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Handle the file upload here
+      console.log('File selected:', file);
+      // You can add your file upload logic here
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-center py-12 px-4 mt-10 sm:px-6 lg:px-8">
@@ -91,8 +102,25 @@ export default function Profile() {
             </p>
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-6">
-                <div>
-                  <img src={currentUser.data.avatar} alt={`${currentUser.data.username}'s profile`} className="w-24 h-24 rounded-full object-cover mx-auto cursor-pointer self-center" />
+                <div className="relative w-24 mx-auto">
+                  <input 
+                    type="file" 
+                    id="avatar" 
+                    className="hidden" 
+                    onChange={handleFileChange}
+                    accept="image/*"  // This restricts to image files only
+                    ref={fileInputRef}
+                  />
+                  <img 
+                    src={currentUser.data.avatar} 
+                    alt={`${currentUser.data.username}'s profile`} 
+                    className="w-24 h-24 rounded-full object-cover"
+                  />
+                  <div 
+                    className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <AiOutlinePlus className="w-5 h-5 text-gray-600" onClick={() => fileInputRef.current.click()} />
+                  </div>
                 </div>
 
                 <div>

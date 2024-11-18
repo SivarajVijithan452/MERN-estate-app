@@ -2,26 +2,42 @@ import { FcGoogle } from 'react-icons/fc'
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth'
 import { app } from './../firebase';
 import { useState } from 'react';
-
+import { useDispatch } from 'react-redux';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice.js';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function OAuth() {
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleGoogleClick = async () => {
         try {
-            setLoading(true);
+            setLoading(true);       
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
 
             await new Promise(resolve => setTimeout(resolve, 2000));
+            dispatch(signInStart());
             const result = await signInWithPopup(auth, provider);
-            console.log(result);
+            const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: result.user.displayName, email: result.user.email, avatar: result.user.photoURL }),
+            });
+            const data = await res.json();
+            dispatch(signInSuccess(data));
+            navigate('/');
+            toast.success('Signed in successfully');
             setLoading(false);
         } catch (error) {
             console.log('Could not authorize with Google', error);
+            toast.error('Could not authorize with Google');
             if (error.code === 'auth/popup-closed-by-user') {
                 // console.log('Popup closed by user');
             }
+            dispatch(signInFailure(error.message));
             setLoading(false);
         }
     }

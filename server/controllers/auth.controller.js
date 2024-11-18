@@ -92,3 +92,46 @@ export const signin = async (req, res, next) => {
         });
     }
 }
+
+export const google = async (req, res) => {
+    try {
+        // user exists or not
+        const user = await User.findOne({ email: req.body.email });
+        // if user exists, sign the token and send response
+        if (user) {
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+            const { password, ...rest } = user._doc;
+            res.cookie('access_token', token, { httpOnly: true })
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'Signed in successfully',
+                    data: rest,
+                    token
+                });
+        }
+        // if user does not exist, create a new user
+        else {
+            // generate a random password
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            // hash the password
+            const hashedPassword = await bcrypt.hashSync(generatedPassword, 10);
+            // create a new user
+            const newUser = new User({ username: req.body.name, email: req.body.email, password: hashedPassword });
+            await newUser.save();
+            // sign the token and send response
+            const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+            const { password, ...rest } = newUser._doc;
+            res.cookie('access_token', token, { httpOnly: true })
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'User created successfully',
+                    data: rest,
+                    token
+                });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

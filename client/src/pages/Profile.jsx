@@ -114,19 +114,23 @@ export default function Profile() {
             });
           } catch (error) {
             console.error('Error deleting old image:', error.response?.data || error.message);
+            toast.error('Error deleting old image');
           }
         }
 
-        // Upload new image
+        // Create FormData object to send file to Cloudinary
         const formData = new FormData();
         formData.append('file', file);
+        // 'estate' is the upload preset configured in Cloudinary settings
         formData.append('upload_preset', 'estate');
 
+        // Upload image to Cloudinary's API
         const cloudinaryRes = await axios.post(
           'https://api.cloudinary.com/v1_1/dcxpvubyl/image/upload',
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
+            // Track upload progress and update the UI
             onUploadProgress: (progressEvent) => {
               const progress = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
@@ -136,13 +140,16 @@ export default function Profile() {
           }
         );
 
+        // If upload successful, update user profile with new avatar URL
         if (cloudinaryRes.data.secure_url) {
+          // Send request to our backend to update user profile
           const response = await axios.put('/api/user/update', {
             avatar: cloudinaryRes.data.secure_url,
           }, {
-            withCredentials: true
+            withCredentials: true // Important for handling authentication cookies
           });
 
+          // Update Redux store with new user data
           dispatch(updateUserSuccess(response.data));
           toast.success('Profile updated successfully');
         }

@@ -47,7 +47,7 @@ export default function SignIn() {
       if (data.success) {
         localStorage.setItem('access_token', data.token);
         toast.success(data.message);
-        dispatch(signInSuccess(data.data)); // Set loading state to false
+        dispatch(signInSuccess(data)); // Set loading state to false
         navigate("/"); // Redirect to home page
         setFormData({
           email: "",

@@ -4,21 +4,25 @@ export const verifyToken = (req, res, next) => {
     const token = req.cookies.access_token;
 
     if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: 'Unauthorized: No token provided'
-        });
+        req.user = null;
+        return next();
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.status(403).json({
-                success: false,
-                message: 'Forbidden: Invalid token'
-            });
+            if (err.name === 'TokenExpiredError') {
+                // Clear the expired cookie
+                res.clearCookie('access_token');
+                return res.status(401).json({
+                    success: false,
+                    message: 'Token has expired. Please sign in again.'
+                });
+            }
+            console.log('JWT Verification Error:', err.message);
+            req.user = null;
+        } else {
+            req.user = user;
         }
-
-        req.user = user;
         next();
     });
 };

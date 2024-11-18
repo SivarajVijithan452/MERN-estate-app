@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user)
-  // console.log('Current user:', currentUser);
+  console.log('Current user:', currentUser);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     password: ''
@@ -173,7 +173,7 @@ export default function Profile() {
               Profile
             </h1>
             <p className="mt-4 text-center text-base font-medium text-gray-600">
-              Hi {currentUser?.username}, Welcome to your profile page! <br />
+              Hi {currentUser.data.username}, Welcome to your profile page! <br />
               Update your profile details below.
             </p>
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -189,8 +189,8 @@ export default function Profile() {
                   />
                   <div className="relative">
                     <img 
-                      src={currentUser?.avatar} 
-                      alt={`${currentUser?.username}'s profile`} 
+                      src={currentUser.data.avatar} 
+                      alt={`${currentUser.data.name}'s profile`} 
                       className="w-24 h-24 rounded-full object-cover"
                     />
                     {loading && (

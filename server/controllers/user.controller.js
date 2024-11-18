@@ -1,5 +1,6 @@
 import User from '../models/user.model.js';
 import cloudinary from '../utils/cloudinary.js';
+import bcrypt from 'bcryptjs';
 
 export const updateUser = async (req, res, next) => {
     try {
@@ -62,3 +63,33 @@ export const deleteImage = async (req, res) => {
     });
   }
 };
+
+export const updateUserInfo = async (req, res) => {
+    try {
+        if(req.user.id !== req.params.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Unauthorized to update this user'
+            });
+        }
+
+        if (req.body.password) {
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { $set: { username: req.body.username, email: req.body.email, password: req.body.password } },
+            { new: true }
+        );
+
+        const { password, ...rest } = updatedUser._doc;
+        res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+            rest
+        });
+    } catch (error) {
+       
+    }
+}

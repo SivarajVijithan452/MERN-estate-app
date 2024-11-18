@@ -59,8 +59,8 @@ export default function Header() {
                         {currentUser ? (
                             <div className="relative" ref={dropdownRef}>
                                 <img 
-                                    src={currentUser?.avatar} 
-                                    alt={`${currentUser?.username}'s profile`}
+                                    src={currentUser.data.avatar} 
+                                    alt={`${currentUser.data.username}'s profile`}
                                     className="w-7 h-7 rounded-full object-cover ml-4 hover:opacity-90 transition-opacity cursor-pointer"
                                     onClick={() => setShowDropdown(!showDropdown)}
                                     onError={(e) => {

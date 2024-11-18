@@ -68,7 +68,7 @@ export const signin = async (req, res, next) => {
         const token = jwt.sign(
             { id: validUser._id }, 
             process.env.JWT_SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '7d' }
         );
 
         // Remove password from response
@@ -99,7 +99,11 @@ export const google = async (req, res) => {
         const user = await User.findOne({ email: req.body.email });
         // if user exists, sign the token and send response
         if (user) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+            const token = jwt.sign(
+                { id: user._id },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+            );
             const { password, ...rest } = user._doc;
             res.cookie('access_token', token, { httpOnly: true })
                 .status(200)
@@ -120,7 +124,11 @@ export const google = async (req, res) => {
             const newUser = new User({ username: req.body.name, email: req.body.email, password: hashedPassword });
             await newUser.save();
             // sign the token and send response
-            const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+            const token = jwt.sign(
+                { id: newUser._id },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+            );
             const { password, ...rest } = newUser._doc;
             res.cookie('access_token', token, { httpOnly: true })
                 .status(200)

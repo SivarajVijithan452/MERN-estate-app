@@ -2,9 +2,14 @@ import { useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlinePlus } from 'react-icons/ai'
 import { useRef } from 'react'
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { updateUserSuccess } from '../redux/user/userSlice';  
+import { toast } from 'react-toastify';
 
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user)
+  // console.log('Current user:', currentUser);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     password: ''
@@ -15,6 +20,8 @@ export default function Profile() {
   const [deletingText, setDeletingText] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const fileInputRef = useRef(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({
@@ -79,12 +86,74 @@ export default function Profile() {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Handle the file upload here
-      console.log('File selected:', file);
-      // You can add your file upload logic here
+      try {
+        setLoading(true);
+        setLoadingText('Uploading image');
+        
+        // Extract public_id from current avatar URL if it exists
+        const currentAvatarUrl = currentUser?.avatar;
+        if (currentAvatarUrl && currentAvatarUrl.includes('cloudinary')) {
+          try {
+            // Extract just the filename without extension
+            const publicId = currentAvatarUrl
+              .split('/')
+              .pop()
+              .split('.')
+              .shift();
+            
+            // console.log('Attempting to delete image with publicId:', publicId);
+            
+            // Delete old image
+            await axios.post('/api/user/delete-image', { 
+              publicId 
+            }, {
+              withCredentials: true
+            });
+          } catch (error) {
+            console.error('Error deleting old image:', error.response?.data || error.message);
+          }
+        }
+
+        // Upload new image
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'estate');
+
+        const cloudinaryRes = await axios.post(
+          'https://api.cloudinary.com/v1_1/dcxpvubyl/image/upload',
+          formData,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress: (progressEvent) => {
+              const progress = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(progress);
+            },
+          }
+        );
+
+        if (cloudinaryRes.data.secure_url) {
+          const response = await axios.put('/api/user/update', {
+            avatar: cloudinaryRes.data.secure_url,
+          }, {
+            withCredentials: true
+          });
+
+          dispatch(updateUserSuccess(response.data));
+          toast.success('Profile updated successfully');
+        }
+        
+      } catch (error) {
+        console.error('Error details:', error.response?.data || error.message);
+        toast.error('Error updating profile image');
+      } finally {
+        setLoading(false);
+        setUploadProgress(0);
+      }
     }
   };
 
@@ -97,7 +166,7 @@ export default function Profile() {
               Profile
             </h1>
             <p className="mt-4 text-center text-base font-medium text-gray-600">
-              Hi {currentUser.data.username}, Welcome to your profile page! <br />
+              Hi {currentUser?.username}, Welcome to your profile page! <br />
               Update your profile details below.
             </p>
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -108,18 +177,26 @@ export default function Profile() {
                     id="avatar" 
                     className="hidden" 
                     onChange={handleFileChange}
-                    accept="image/*"  // This restricts to image files only
+                    accept="image/*"
                     ref={fileInputRef}
                   />
-                  <img 
-                    src={currentUser.data.avatar} 
-                    alt={`${currentUser.data.username}'s profile`} 
-                    className="w-24 h-24 rounded-full object-cover"
-                  />
+                  <div className="relative">
+                    <img 
+                      src={currentUser?.avatar} 
+                      alt={`${currentUser?.username}'s profile`} 
+                      className="w-24 h-24 rounded-full object-cover"
+                    />
+                    {loading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                        <div className="text-white text-xs">{uploadProgress}%</div>
+                      </div>
+                    )}
+                  </div>
                   <div 
                     className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                    onClick={() => !loading && fileInputRef.current.click()}
                   >
-                    <AiOutlinePlus className="w-5 h-5 text-gray-600" onClick={() => fileInputRef.current.click()} />
+                    <AiOutlinePlus className="w-5 h-5 text-gray-600" />
                   </div>
                 </div>
 

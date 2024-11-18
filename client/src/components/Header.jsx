@@ -7,7 +7,7 @@ export default function Header() {
     const [activeLink, setActiveLink] = useState('/');
     const location = useLocation(); // To get the current route
     const { currentUser } = useSelector(state => state.user);
-    console.log('Current user:', currentUser);
+    // console.log('Current user:', currentUser);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -59,8 +59,8 @@ export default function Header() {
                         {currentUser ? (
                             <div className="relative" ref={dropdownRef}>
                                 <img 
-                                    src={currentUser.data.avatar} 
-                                    alt={`${currentUser.data.username}'s profile`}
+                                    src={currentUser?.avatar} 
+                                    alt={`${currentUser?.username}'s profile`}
                                     className="w-7 h-7 rounded-full object-cover ml-4 hover:opacity-90 transition-opacity cursor-pointer"
                                     onClick={() => setShowDropdown(!showDropdown)}
                                     onError={(e) => {

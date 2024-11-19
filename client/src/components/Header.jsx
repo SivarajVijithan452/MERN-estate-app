@@ -1,7 +1,10 @@
-import { FaSearch, FaUser } from 'react-icons/fa'
+import { FaSearch, FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux';
+import { signInStart, signInSuccess, signOutFailure } from '../redux/user/userSlice';  
 
 export default function Header() {
     const [activeLink, setActiveLink] = useState('/');
@@ -10,6 +13,7 @@ export default function Header() {
     console.log('Current user:', currentUser);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
+    const dispatch = useDispatch();
 
     // This will update the active link when the location changes
     useEffect(() => {
@@ -28,6 +32,22 @@ export default function Header() {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const handleSignOut = async () => {
+        try {
+            dispatch(signInStart());
+            // Call the sign-out API endpoint
+            await fetch('/api/auth/signout', { method: 'POST', credentials: 'include' });
+            localStorage.removeItem('access_token'); // {{ edit_2: Remove token from local storage }}
+            dispatch(signInSuccess());
+            window.location.href = '/'; // Redirect to home after sign out
+            toast.success('Successfully SignOut!!!');
+        } catch (error) {
+            console.error('Error signing out:', error);
+            toast.error('Error when signOut', error);
+            dispatch(signOutFailure(error.message));
+        }
+    };
 
     return (
         <header className="bg-slate-200 shadow-md fixed top-0 w-full z-50">
@@ -76,6 +96,10 @@ export default function Header() {
                                                 Profile
                                             </div>
                                         </Link>
+                                        <div onClick={handleSignOut} className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center cursor-pointer">
+                                            <FaSignOutAlt className="mr-2" />
+                                            Sign Out
+                                        </div>
                                     </div>
                                 )}
                             </div>

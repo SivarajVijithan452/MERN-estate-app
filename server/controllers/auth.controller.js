@@ -143,3 +143,24 @@ export const google = async (req, res) => {
         console.log(error);
     }
 }
+
+
+export const signOut = async (req, res, next) => {
+    try {
+        // Clear the cookie by setting its expiration date to the past
+        res.clearCookie('access_token'); // {{ edit_1: Clear the access token cookie }}
+
+        // Send a response indicating successful sign out
+        return res.status(200).json({
+            success: true,
+            message: 'Signed out successfully' // {{ edit_2: Response message }}
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error', // {{ edit_3: Error handling }}
+            error: error.message
+        });
+    }
+}

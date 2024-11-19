@@ -70,11 +70,31 @@ export const userSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+
+        // Add sign out reducers
+        signOutStart: (state) => {
+            state.loading = true; // {{ edit_1: Set loading to true }}
+        },
+
+        signOutSuccess: (state) => {
+            state.currentUser = null; // {{ edit_2: Clear currentUser on successful sign out }}
+            state.loading = false;
+            state.error = null;
+        },
+
+        signOutFailure: (state, action) => {
+            state.error = action.payload; // {{ edit_3: Store error message on failure }}
+            state.loading = false;
+        },
     },
 })
 
 // Export the action creators for use in components
-export const { signInStart, signInSuccess, signInFailure, updateUserStart, updateUserSuccess, updateUserFailure, deleteUserAccocuntStart, deleteUserAccocuntSuccess, deleteUserAccocuntFailure } = userSlice.actions;
+export const { signInStart, signInSuccess, signInFailure, updateUserStart, updateUserSuccess, updateUserFailure, deleteUserAccocuntStart, deleteUserAccocuntSuccess, deleteUserAccocuntFailure, 
+    signOutStart, // {{ edit_4: Export signOut actions }}
+    signOutSuccess,
+    signOutFailure
+ } = userSlice.actions;
 
 // Export the reducer for store configuration
 export default userSlice.reducer;

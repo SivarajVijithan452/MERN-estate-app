@@ -4,8 +4,10 @@ import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlinePlus } from 'react-icons/
 import { useRef } from 'react'
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice';  
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserAccocuntStart, deleteUserAccocuntSuccess, deleteUserAccocuntFailure } from '../redux/user/userSlice';  
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user)
@@ -20,6 +22,7 @@ export default function Profile() {
   const fileInputRef = useRef(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -87,12 +90,28 @@ export default function Profile() {
   const confirmDelete = async () => {
     setShowDeleteModal(false);
     setIsDeleting(true);
+    
+
+    dispatch(deleteUserAccocuntStart()); // Start the delete user process
+
     try {
-      // Your delete account logic here
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate API call
-      setDeletingText('Please wait, this may take a moment...');
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Additional waiting message
+      // Call the API to delete the user account
+      const response = await axios.delete(`/api/user/delete-user/${currentUser.data._id}`, {
+        withCredentials: true // Important for handling authentication cookies
+      });
+
+      if (response.data.success) {
+        dispatch(deleteUserAccocuntSuccess()); // Dispatch success action
+        // Clear access token from local storage
+        localStorage.removeItem('access_token');
+        // Clear cookies (you may need a library like js-cookie for this)
+        // document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; // Clear cookie
+        // Navigate to sign-up page
+        navigate('/signup');
+        toast.success('Successfully deleted your account, please sign up again!');
+      }
     } catch (error) {
+      dispatch(deleteUserAccocuntFailure(error.response?.data?.message || 'Error deleting account')); // Dispatch failure action
       console.error(error);
     } finally {
       setIsDeleting(false);

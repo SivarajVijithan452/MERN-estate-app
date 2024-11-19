@@ -52,11 +52,29 @@ export const userSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+
+        // Called when delete user process starts
+        deleteUserAccocuntStart: (state) => {
+            state.loading = true;
+        },
+
+        // Called when delete user is successful
+        deleteUserAccocuntSuccess: (state) => {
+            state.currentUser = null; // Optionally clear currentUser on successful deletion
+            state.loading = false;
+            state.error = null;
+        },
+
+        // Called when delete user fails
+        deleteUserAccocuntFailure: (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
     },
 })
 
 // Export the action creators for use in components
-export const { signInStart, signInSuccess, signInFailure, updateUserStart, updateUserSuccess, updateUserFailure } = userSlice.actions;
+export const { signInStart, signInSuccess, signInFailure, updateUserStart, updateUserSuccess, updateUserFailure, deleteUserAccocuntStart, deleteUserAccocuntSuccess, deleteUserAccocuntFailure } = userSlice.actions;
 
 // Export the reducer for store configuration
 export default userSlice.reducer;

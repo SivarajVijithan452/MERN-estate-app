@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import './utils/cloudinary.js';
 import userRoute from './routes/user.route.js';
@@ -15,8 +16,10 @@ mongoose.connect(process.env.MONGO).then(() => {
 });
 
 const app = express();
+
 app.use(express.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
+app.use(cors()); 
 
 // Routes
 app.use('/api/user', userRoute);

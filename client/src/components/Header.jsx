@@ -10,7 +10,7 @@ export default function Header() {
     const [activeLink, setActiveLink] = useState('/');
     const location = useLocation(); // To get the current route
     const { currentUser } = useSelector(state => state.user);
-    console.log('Current user:', currentUser);
+    // console.log('Current user:', currentUser);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
     const dispatch = useDispatch();

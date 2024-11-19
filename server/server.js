@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import './utils/cloudinary.js';
 import userRoute from './routes/user.route.js';
 import authRoute from './routes/auth.route.js';
+import listRoute from './routes/list.route.js';
 dotenv.config();
 
 // Connect to MongoDB
@@ -24,6 +25,7 @@ app.use(cors());
 // Routes
 app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/listing', listRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

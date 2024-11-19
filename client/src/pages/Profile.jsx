@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { currentUser } = useSelector((state) => state.user)
-  console.log('Current user:', currentUser);
+  // console.log('Current user:', currentUser);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);

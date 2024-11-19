@@ -1,4 +1,4 @@
-import { FaSearch, FaUser, FaSignOutAlt } from 'react-icons/fa'
+import { FaSearch, FaUser, FaSignOutAlt, FaHome } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
@@ -91,9 +91,15 @@ export default function Header() {
                                 {showDropdown && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
                                         <Link to="/profile">
-                                            <div className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <div className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center cursor-pointer">
                                                 <FaUser className="mr-2" />
                                                 Profile
+                                            </div>
+                                        </Link>
+                                        <Link to="/listing">
+                                            <div className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center cursor-pointer">
+                                                <FaHome className="mr-2" />
+                                                Listings
                                             </div>
                                         </Link>
                                         <div onClick={handleSignOut} className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center cursor-pointer">

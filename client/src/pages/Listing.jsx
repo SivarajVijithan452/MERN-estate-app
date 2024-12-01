@@ -36,6 +36,12 @@ export default function Listing() {
     const handleCreateListing = async (event) => {
         event.preventDefault(); // Prevent default form submission
 
+        // Validation: Check if no images are uploaded
+        if (uploadedImageUrls.length === 0) {
+            toast.warn('Please upload at least one image before creating a listing.'); // Show warning message
+            return; // Exit the function early
+        }
+
         const listingData = {
             name,
             description,

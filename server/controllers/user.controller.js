@@ -1,6 +1,7 @@
 import User from '../models/user.model.js';
 import cloudinary from '../utils/cloudinary.js';
 import bcrypt from 'bcryptjs';
+import listing from '../models/listing.model.js';
 // import { sendUpdateNotification } from '../utils/emailService.js';
 
 
@@ -168,3 +169,27 @@ export const deleteUser = async (req, res) => {
         });
     }
 };
+
+export const getUserListings = async (req, res) => {
+    try {
+        if (req.user.id === req.params.id) {
+            try {
+                const listings = await listing.find({ userRef: req.params.id });
+                res.status(200).json({
+                    success: true,
+                    message: 'User listings retrieved successfully',
+                    listings
+                });
+            } catch (error) {
+                console.error('Error fetching user listings:', error);
+            }
+        } else {
+            return res.status(403).json({
+                success: false,
+                message: 'Unauthorized to view this user\'s listings'
+            });
+        }
+    } catch (error) {
+        console.error('Error getting user listings:', error);
+    }
+}

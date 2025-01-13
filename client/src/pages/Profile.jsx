@@ -21,6 +21,8 @@ export default function Profile() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const fileInputRef = useRef(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [listings, setListings] = useState([]);
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -196,6 +198,18 @@ export default function Profile() {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      setError(""); // Reset error before fetching
+      const response = await axios.get(`/api/user/listings/${currentUser.data._id}`, {
+        withCredentials: true,
+      });
+      setListings(response.data.listings); // Set listings data
+    } catch (error) {
+      setError(error.response?.data?.message || "Failed to fetch listings.");
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-center py-12 px-4 mt-20 sm:px-6 lg:px-8">
@@ -360,6 +374,88 @@ export default function Profile() {
         </div>
       </div>
 
+      <hr className="my-4 border-gray-300 mx-auto w-11/12" />
+
+        <div className="flex flex-col min-h-screen sm:px-6 lg:px-8 bg-gray-100">
+          <div className="max-w-xxl w-full space-y-6 bg-white p-6 rounded-xl shadow-lg">
+            <button
+              onClick={handleShowListings}
+              className="text-green-700 font-semibold py-2 px-4 border border-green-700 rounded-md hover:bg-green-700 hover:text-white transition duration-300"
+            >
+              Show Listing
+            </button>
+
+            {/* Display the total number of results */}
+            {listings.length > 0 && (
+              <p className="text-gray-700 mt-4 text-lg">
+                Total Listings: <span className="font-bold">{listings.length}</span>
+              </p>
+            )}
+
+            {/* Display error message if there is an error */}
+            {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+
+            {/* Display listings */}
+            <div className="mt-4 grid gap-6">
+              {listings.length > 0 ? (
+                listings.map((listing) => (
+                  <div key={listing._id} className="p-6 border rounded-lg bg-gray-50 shadow-md">
+                    <h2 className="text-xl font-bold mb-2">{listing.name}</h2>
+                    <p className="text-gray-700 mb-2">{listing.description}</p>
+                    <p className="mt-2 text-gray-600">
+                      <strong>Address:</strong> {listing.address}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Price:</strong> LKR {listing.regularPrice}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Discount Price:</strong> LKR {listing.discountPrice}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Bedrooms:</strong> {listing.bedrooms}, <strong>Bathrooms:</strong> {listing.bathrooms}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Furnished:</strong> {listing.furnished ? "Yes" : "No"}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Parking:</strong> {listing.parking ? "Yes" : "No"}
+                    </p>
+                    <div className="flex space-x-4 mt-4">
+                      {listing.imageUrls.map((url, index) => (
+                        <img
+                          key={index}
+                          src={url}
+                          alt={`Listing ${index + 1}`}
+                          className="w-32 h-32 object-cover rounded-lg"
+                        />
+                      ))}
+                    </div>
+                    {/* Action buttons */}
+                    <div className="flex justify-end space-x-4 mt-6">
+                      <button
+                        onClick={() => handleEditListing(listing._id)}
+                        className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteListing(listing._id)}
+                        className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-300"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center">No listings to display.</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+
+          
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

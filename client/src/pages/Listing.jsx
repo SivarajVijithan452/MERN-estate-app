@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Switch from "@mui/material/Switch";
 import axios from 'axios';
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
 
 export default function Listing() {
     const { currentUser } = useSelector((state) => state.user);
@@ -17,6 +18,7 @@ export default function Listing() {
     const [files, setFiles] = useState([]);
     const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
+    const navigate = useNavigate();
     
     // New states for form fields
     const [name, setName] = useState('');
@@ -42,6 +44,12 @@ export default function Listing() {
             return; // Exit the function early
         }
 
+        // New validation: Check if discount price is lower than regular price
+        if (discountPrice >= regularPrice) {
+            toast.warn('Discount price must be lower than regular price.'); // Show warning message
+            return; // Exit the function early
+        }
+
         const listingData = {
             name,
             description,
@@ -61,7 +69,19 @@ export default function Listing() {
         try {
             const response = await axios.post('/api/listing/create', listingData); // Adjust the endpoint as necessary
             toast.success(response.data.message); // Show success message
-            
+                if (response.data && response.data.data) {
+                    console.log('Response data:', response.data); // Log the entire response data
+                    const listingId = response.data.data._id; // Extract the listing ID from the response
+                    if (listingId) {
+                        toast.success(response.data.message); // Show success message
+                        navigate(`/listing/${listingId}`); // Navigate to the new listing page
+                    } else {
+                        throw new Error('Listing ID is missing in the response.');
+                    }
+                } else {
+                    throw new Error('Response data is undefined.');
+                }
+    
             // Reset all fields after successful creation
             setName('');
             setDescription('');

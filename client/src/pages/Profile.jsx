@@ -210,6 +210,22 @@ export default function Profile() {
     }
   };
 
+  const handleDeleteListing = async (listingId) => {
+    try {
+      setError(""); // Reset error before deleting
+      const response = await axios.delete(`/api/listing/delete/${listingId}`, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        setListings((prevListings) => prevListings.filter((listing) => listing._id !== listingId));
+        toast.success("Listing deleted successfully");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Failed to delete listing.");
+      toast.error(error.response?.data?.message || "Failed to delete listing.");
+    }
+  }
+
   return (
     <>
       <div className="flex items-center justify-center py-12 px-4 mt-20 sm:px-6 lg:px-8">

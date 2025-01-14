@@ -81,20 +81,20 @@ export const updateUserInfo = async (req, res) => {
         }
 
         // Get the user before update to compare changes
-        // const currentUser = await User.findById(req.params.id);
-        // const changes = [];
+        const currentUser = await User.findById(req.params.id);
+        const changes = [];
 
         // Track what's being updated
-        // if (req.body.username && req.body.username !== currentUser.username) {
-        //     changes.push('username');
-        // }
-        // if (req.body.email && req.body.email !== currentUser.email) {
-        //     changes.push('email');
-        // }
-        // if (req.body.password) {
-        //     changes.push('password');
-        //     req.body.password = await bcrypt.hash(req.body.password, 10);
-        // }
+        if (req.body.username && req.body.username !== currentUser.username) {
+            changes.push('username');
+        }
+        if (req.body.email && req.body.email !== currentUser.email) {
+            changes.push('email');
+        }
+        if (req.body.password) {
+            changes.push('password');
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+        }
 
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
@@ -107,19 +107,6 @@ export const updateUserInfo = async (req, res) => {
             },
             { new: true }
         );
-
-        // Send email notifications for each change
-        // for (const changeType of changes) {
-        //     try {
-        //         await sendUpdateNotification(
-        //             req.body.email || currentUser.email, // Use new email if changed, otherwise use existing
-        //             changeType
-        //         );
-        //     } catch (emailError) {
-        //         console.error(`Failed to send ${changeType} update notification:`, emailError);
-        //         // Continue with other operations even if email fails
-        //     }
-        // }
 
         const { password, ...rest } = updatedUser._doc;
         res.status(200).json({

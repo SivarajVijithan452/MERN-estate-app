@@ -17,3 +17,33 @@ export const createListing = async (req, res) => {
         });
     }
 }
+
+export const deleteListing = async (req, res) => {
+    try {
+        const listing = await Listing.findById(req.params.id);
+        if (!listing) {
+            return res.status(404).json({
+                success: false,
+                message: "Listing not found"
+            });
+        }
+        if(req.user.id !== listing.userRef){
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized to delete this listing"
+            });
+        }
+        await Listing.findByIdAndDelete(req.params.id);
+        return res.status(200).json({
+            success: true,
+            message: "Listing deleted successfully"
+        });
+    } catch (error) {
+        console.log("error", error);
+        res.status(500).json({
+            success: false,
+            message: "Error deleting listing",
+            error: error.message
+        });
+    }
+}

@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import Listing from './pages/Listing'
+import UpdateListing from './pages/UpdateListing'
 
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/listing" element={<Listing />} />
+          <Route path="/update-listing" element={<UpdateListing />} />
         </Route>
         <Route element={<PublicRoute />}>
           <Route path="/signin" element={<SignIn />} />

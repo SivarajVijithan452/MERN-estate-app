@@ -66,7 +66,8 @@ export const updateListing = async (req, res) => {
         const updatedListing = await Listing.findByIdAndUpdate(req.params.id, req.body, {new : true});
         return res.status(200).json({
             success: true,
-            message: "Listing Updated successfully"
+            message: "Listing Updated successfully",
+            data: updatedListing
         });
     } catch (error) {
         console.log(error);

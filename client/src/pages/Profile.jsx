@@ -394,6 +394,7 @@ export default function Profile() {
 
         <div className="flex flex-col min-h-screen sm:px-6 lg:px-8 bg-gray-100">
           <div className="max-w-xxl w-full space-y-6 bg-white p-6 rounded-xl shadow-lg">
+          <p className="mt-4 text-center text-base font-medium text-gray-600">Click Here to view your Lisitings!</p>
             <button
               onClick={handleShowListings}
               className="text-green-700 font-semibold py-2 px-4 border border-green-700 rounded-md hover:bg-green-700 hover:text-white transition duration-300"

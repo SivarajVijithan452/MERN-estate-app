@@ -184,7 +184,7 @@ export default function UpdateListing() {
     try {
       const response = await axios.post(`/api/listing/update/${listingId}`, listingData);
       toast.success("Listing updated successfully!");
-      navigate(`/update-listing/${response.data.data._id}`);
+      navigate(`/listing/${listingId}`);
     } catch (error) {
       console.error("Error updating listing:", error);
       toast.error("Error updating listing.");

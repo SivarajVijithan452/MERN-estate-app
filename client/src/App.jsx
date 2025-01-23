@@ -11,6 +11,7 @@ import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import Listing from './pages/Listing'
 import UpdateListing from './pages/UpdateListing'
+import ViewListing from './pages/ViewListing'
 
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/listing/:listingId" element={<ViewListing />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/listing" element={<Listing />} />

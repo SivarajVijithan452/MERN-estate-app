@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserAccocuntStart, deleteUserAccocuntSuccess, deleteUserAccocuntFailure } from '../redux/user/userSlice';  
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 export default function Profile() {
@@ -448,11 +448,13 @@ export default function Profile() {
                     </div>
                     {/* Action buttons */}
                     <div className="flex justify-end space-x-4 mt-6">
+                      <Link to={`/update-listing/${listing._id}`}>
                       <button
                         className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
                       >
                         Edit
                       </button>
+                      </Link>
                       <button
                         onClick={() => handleDeleteListing(listing._id)}
                         className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-300"

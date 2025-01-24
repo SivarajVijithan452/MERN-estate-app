@@ -413,41 +413,43 @@ export default function Profile() {
             {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
             {/* Display listings */}
-            <div className="mt-4 grid gap-6">
-              {listings.length > 0 ? (
-                listings.map((listing) => (
-                  <div key={listing._id} className="p-6 border rounded-lg bg-gray-50 shadow-md">
-                    <h2 className="text-xl font-bold mb-2">{listing.name}</h2>
-                    <p className="text-gray-700 mb-2">{listing.description}</p>
-                    <p className="mt-2 text-gray-600">
-                      <strong>Address:</strong> {listing.address}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Price:</strong> LKR {listing.regularPrice}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Discount Price:</strong> LKR {listing.discountPrice}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Bedrooms:</strong> {listing.bedrooms}, <strong>Bathrooms:</strong> {listing.bathrooms}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Furnished:</strong> {listing.furnished ? "Yes" : "No"}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Parking:</strong> {listing.parking ? "Yes" : "No"}
-                    </p>
-                    <div className="flex space-x-4 mt-4">
-                      {listing.imageUrls.map((url, index) => (
+                  <div className="mt-4 grid gap-6">
+                    {listings.length > 0 ? (
+                    listings.map((listing) => (
+                      <div key={listing._id} className="p-6 border rounded-lg bg-gray-50 shadow-md">
+                      <Link to={`/listing/${listing._id}`}>
+                        <h2 className="text-xl font-bold mb-2 text-blue-600 hover:underline">{listing.name}</h2>
+                      </Link>
+                      <p className="text-gray-700 mb-2">{listing.description}</p>
+                      <p className="mt-2 text-gray-600">
+                        <strong>Address:</strong> {listing.address}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Price:</strong> LKR {listing.regularPrice}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Discount Price:</strong> LKR {listing.discountPrice}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Bedrooms:</strong> {listing.bedrooms}, <strong>Bathrooms:</strong> {listing.bathrooms}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Furnished:</strong> {listing.furnished ? "Yes" : "No"}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Parking:</strong> {listing.parking ? "Yes" : "No"}
+                      </p>
+                      <div className="flex space-x-4 mt-4">
+                        {listing.imageUrls.map((url, index) => (
                         <img
                           key={index}
                           src={url}
                           alt={`Listing ${index + 1}`}
                           className="w-32 h-32 object-cover rounded-lg"
                         />
-                      ))}
-                    </div>
-                    {/* Action buttons */}
+                        ))}
+                      </div>
+                      {/* Action buttons */}
                     <div className="flex justify-end space-x-4 mt-6">
                       <Link to={`/update-listing/${listing._id}`}>
                       <button

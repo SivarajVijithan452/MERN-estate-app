@@ -75,6 +75,13 @@ export const updateListing = async (req, res) => {
 }
 
 export const getListing = async (req, res) => {
+    if (!req.params.id) {
+        return res.status(400).json({
+            success: false,
+            message: "Listing ID not provided"
+        });
+    }
+
     try {
         const listing = await Listing.findById(req.params.id);
         if (!listing) {

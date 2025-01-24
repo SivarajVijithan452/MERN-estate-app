@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaBed, FaBath, FaMapMarkerAlt, FaDollarSign } from 'react-icons/fa';
 
@@ -7,6 +8,7 @@ export default function ViewListing() {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -55,10 +57,10 @@ export default function ViewListing() {
   if (listing) {
     return (
       <div className="flex items-center justify-center py-12 px-4 mt-20 sm:px-6 lg:px-8">
-        <div className="max-w-xxl space-y-8 bg-white p-12 rounded-xl shadow-lg mx-auto">
-        {/* Listing Title */}
-        <h1 className="text-3xl font-bold mb-4">{listing.name}</h1>
-        {/* Image Slider */}
+          <div className="max-w-xxl space-y-8 bg-white p-12 rounded-xl shadow-lg mx-auto">
+          {/* Listing Title */}
+          <h1 className="text-3xl font-bold mb-4">{listing.name}</h1>
+          {/* Image Slider */}
             <div className="relative mb-6">
             <img
             src={listing.imageUrls[currentImageIndex]}
@@ -81,48 +83,57 @@ export default function ViewListing() {
             <p>Image {currentImageIndex + 1} of {listing.imageUrls.length}</p>
             </div>
             </div>
-          <p className="text-lg mb-6">{listing.description}</p>
+            <p className="text-lg mb-6">{listing.description}</p>
 
-          {/* Price and Location */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div className="flex items-center space-x-2 bg-red-600 text-white p-3 rounded-lg">
+            {/* Price and Location */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+            <div className="flex items-center space-x-2 bg-red-600 text-white p-3 rounded-lg">
             <FaMapMarkerAlt className="text-white" />
             <p className="text-lg">{listing.address}</p>
-          </div>
-          <div className="flex items-center space-x-2 bg-green-600 text-white p-3 rounded-lg">
+            </div>
+            <div className="flex items-center space-x-2 bg-green-600 text-white p-3 rounded-lg">
             <FaDollarSign className="text-white" />
             <p className="text-lg font-bold">
               {listing.offer ? listing.discountPrice : listing.regularPrice} LKR
             </p>
+            </div>
           </div>
-        </div>
 
-        {/* Bedrooms and Bathrooms */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div className="flex items-center space-x-2 bg-yellow-500 text-white p-3 rounded-lg">
+          {/* Bedrooms and Bathrooms */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+            <div className="flex items-center space-x-2 p-3 rounded-lg">
             <FaBed />
             <p className="text-lg">{listing.bedrooms} Bedrooms</p>
-          </div>
-          <div className="flex items-center space-x-2 bg-blue-500 text-white p-3 rounded-lg">
+            </div>
+            <div className="flex items-center space-x-2  p-3 rounded-lg">
             <FaBath />
             <p className="text-lg">{listing.bathrooms} Bathrooms</p>
+            </div>
           </div>
-        </div>
 
-        {/* Furnished and Parking */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div className="flex items-center space-x-2 bg-gray-800 text-white p-3 rounded-lg">
-            <p className="text-lg">
-              <strong>Furnished:</strong> {listing.furnished ? 'Yes' : 'No'}
-            </p>
+          {/* Furnished and Parking */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+              <div className="flex items-center space-x-2 p-3 rounded-lg">
+                  <p className="text-lg">
+                    <strong>Furnished:</strong> {listing.furnished ? 'Yes' : 'No'}
+                  </p>
+              </div>
+              <div className="flex items-center space-x-2 p-3 rounded-lg">
+                <p className="text-lg">
+                  <strong>Parking:</strong> {listing.parking ? 'Yes' : 'No'}
+                </p>
+              </div>
+            </div>
+          {/* Contact Landlord */}
+          {/* Only show the contact button if the user is not the landlord */}
+          {currentUser && currentUser.id !== listing.userRef && (
+            <div className="flex justify-center">
+              <button className="bg-slate-700 text-white uppercase hover:bg-slate-800 rounded-lg p-3">
+              Contact Landlord
+              </button>
+            </div>
+          )}
           </div>
-          <div className="flex items-center space-x-2 bg-gray-800 text-white p-3 rounded-lg">
-            <p className="text-lg">
-              <strong>Parking:</strong> {listing.parking ? 'Yes' : 'No'}
-            </p>
-          </div>
-        </div>
-        </div>
       </div>
     );
   }

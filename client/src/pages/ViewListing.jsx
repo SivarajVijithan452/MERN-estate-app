@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaBed, FaBath, FaMapMarkerAlt, FaDollarSign } from 'react-icons/fa';
+import ContactLand from '../components/ContactLand';
 
 export default function ViewListing() {
   const { listingId } = useParams(); // Destructure listingId from useParams
@@ -9,6 +10,7 @@ export default function ViewListing() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
+  const [contact, setContact] = useState(false);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -126,13 +128,15 @@ export default function ViewListing() {
             </div>
           {/* Contact Landlord */}
           {/* Only show the contact button if the user is not the landlord */}
-          {currentUser && currentUser.id !== listing.userRef && (
+          {currentUser && currentUser.id !== listing.userRef && !contact && (
             <div className="flex justify-center">
-              <button className="bg-slate-700 text-white uppercase hover:bg-slate-800 rounded-lg p-3">
+              <button onClick={() => {setContact(true)}} className="bg-slate-700 text-white uppercase hover:bg-slate-800 rounded-lg p-3">
               Contact Landlord
               </button>
             </div>
           )}
+          {/* Contact is true */}
+          {contact && <ContactLand listing={listing}/>}
           </div>
       </div>
     );

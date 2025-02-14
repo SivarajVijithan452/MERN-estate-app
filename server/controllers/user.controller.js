@@ -180,3 +180,29 @@ export const getUserListings = async (req, res) => {
         console.error('Error getting user listings:', error);
     }
 }
+
+
+export const getUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        const { password, ...rest } = user._doc;
+        res.status(200).json({
+            success: true,
+            message: 'User retrieved successfully',
+            data: rest
+        });
+    } catch (error) {
+        console.error('Error getting user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error getting user',
+            error: error.message
+        });
+    }
+}

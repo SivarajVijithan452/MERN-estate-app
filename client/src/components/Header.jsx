@@ -1,5 +1,5 @@
 import { FaSearch, FaUser, FaSignOutAlt, FaHome } from 'react-icons/fa'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify'
@@ -14,6 +14,8 @@ export default function Header() {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
     const dispatch = useDispatch();
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
 
     // This will update the active link when the location changes
     useEffect(() => {
@@ -49,6 +51,21 @@ export default function Header() {
         }
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (searchTerm.trim() === '') return;
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('searchTerm', searchTerm);
+        const searchQuery = urlParams.toString();
+        navigate(`/search?${searchQuery}`);
+    }
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const searchTermFromUrl = urlParams.get('searchTerm');
+        if (searchTermFromUrl) setSearchTerm(searchTermFromUrl);
+    }, [location.search]);
+
     return (
         <header className="bg-slate-200 shadow-md fixed top-0 w-full z-50">
             <div className="max-w-screen-2xl flex justify-between items-center mx-auto p-3">
@@ -59,9 +76,11 @@ export default function Header() {
                     </Link>
                 </h1>
                 <div className="flex items-center gap-6">
-                    <form className="hidden lg:flex bg-slate-100 p-3 rounded-lg items-center">
-                        <input type="text" placeholder="Search..." className="bg-transparent focus:outline-none w-64 lg:w-80 h-7" />
-                        <FaSearch className="text-slate-600 cursor-pointer" />
+                    <form onSubmit={handleSubmit} className="hidden lg:flex bg-slate-100 p-3 rounded-lg items-center">
+                        <input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} type="text" placeholder="Search..." className="bg-transparent focus:outline-none w-64 lg:w-80 h-7" />
+                        <button>
+                            <FaSearch className="text-slate-600 cursor-pointer" />
+                        </button>
                     </form>
                     <ul className="flex items-center gap-4">
                         <Link to='/'>

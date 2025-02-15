@@ -7,6 +7,7 @@ import './utils/cloudinary.js';
 import userRoute from './routes/user.route.js';
 import authRoute from './routes/auth.route.js';
 import listRoute from './routes/list.route.js';
+import path from 'path';
 dotenv.config();
 
 // Connect to MongoDB
@@ -16,6 +17,7 @@ mongoose.connect(process.env.MONGO).then(() => {
     console.log(err);
 });
 
+const __dirname = path.resolve();
 const app = express();
 
 app.use(express.json());
@@ -26,6 +28,11 @@ app.use(cors());
 app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/listing', listRoute);
+
+app.use(express.static(path.join(__dirname, '/client/dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

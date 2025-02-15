@@ -60,7 +60,7 @@ export default function Listing() {
             discountPrice,
             furnished: isFurnished, // Ensure this is set correctly
             parking: hasParking, // Use the state for parking
-            type: isSelling ? 'sell' : (isRenting ? 'rent' : 'other'), // Determine type based on switches
+            type: isSelling ? 'sale' : (isRenting ? 'rent' : 'other'), // Determine type based on switches
             imageUrls: uploadedImageUrls, // Include uploaded image URLs
             userRef: currentUser.data._id, // Set userRef to the current user's ID
             offer: hasOffer // Include the offer state
